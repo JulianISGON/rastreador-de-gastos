@@ -79,7 +79,7 @@ public final class ExpenseTrackerApplication {
 
         // Se crea el gasto y se imprime su identificador.
         Expense expense = expenseService.addExpense(description, amount, category);
-        System.out.printf("Gasto añadido correctamente (ID: %d)%n", expense.id());
+        System.out.printf("%s%n", ConsoleText.ascii(String.format("Gasto anadido correctamente (ID: %d)", expense.id())));
         // Si hay presupuesto configurado, se muestra una advertencia si corresponde.
         printBudgetWarningIfNeeded();
         return 0;
@@ -98,7 +98,7 @@ public final class ExpenseTrackerApplication {
 
         // Se aplica la actualización y se confirma la operación.
         expenseService.updateExpense(id, description, amount, category);
-        System.out.println("Gasto actualizado correctamente");
+        System.out.println(ConsoleText.ascii("Gasto actualizado correctamente"));
         printBudgetWarningIfNeeded();
         return 0;
     }
@@ -112,7 +112,7 @@ public final class ExpenseTrackerApplication {
 
         // Se elimina el gasto y se informa el resultado.
         expenseService.deleteExpense(id);
-        System.out.println("Gasto eliminado correctamente");
+        System.out.println(ConsoleText.ascii("Gasto eliminado correctamente"));
         return 0;
     }
 
@@ -127,7 +127,7 @@ public final class ExpenseTrackerApplication {
 
         // Si no hay datos, se informa de forma clara.
         if (expenses.isEmpty()) {
-            System.out.println("No hay gastos para mostrar");
+            System.out.println(ConsoleText.ascii("No hay gastos para mostrar"));
             return 0;
         }
 
@@ -152,12 +152,12 @@ public final class ExpenseTrackerApplication {
         ExpenseService.Summary summary = expenseService.getSummary(month, category);
         // Si no hay mes, se presenta un total global.
         if (month == null) {
-            System.out.printf("Total de gastos: %s%n", summary.formattedTotal());
+            System.out.printf("%s%n", ConsoleText.ascii(String.format("Total de gastos: %s", summary.formattedTotal())));
             return 0;
         }
 
         // Si sí hay mes, se presenta el nombre del mes en español.
-        System.out.printf("Total de gastos para %s: %s%n", summary.monthName(), summary.formattedTotal());
+        System.out.printf("%s%n", ConsoleText.ascii(String.format("Total de gastos para %s: %s", summary.monthName(), summary.formattedTotal())));
         return 0;
     }
 
@@ -177,7 +177,7 @@ public final class ExpenseTrackerApplication {
                 // Se persiste el nuevo presupuesto.
                 expenseService.setMonthlyBudget(amount);
                 // Se confirma el valor guardado.
-                System.out.printf("Presupuesto mensual establecido en %s%n", MoneyFormatter.format(amount));
+                System.out.printf("%s%n", ConsoleText.ascii(String.format("Presupuesto mensual establecido en %s", MoneyFormatter.format(amount))));
                 // Se advierte si ya se superó el límite.
                 printBudgetWarningIfNeeded();
                 yield 0;
@@ -186,17 +186,17 @@ public final class ExpenseTrackerApplication {
                 // Se consulta el presupuesto actual.
                 BigDecimal budget = expenseService.getMonthlyBudget();
                 if (budget == null) {
-                    System.out.println("No hay presupuesto mensual configurado");
+                    System.out.println(ConsoleText.ascii("No hay presupuesto mensual configurado"));
                 } else {
                     // Si existe, se muestra formateado.
-                    System.out.printf("Presupuesto mensual actual: %s%n", MoneyFormatter.format(budget));
+                    System.out.printf("%s%n", ConsoleText.ascii(String.format("Presupuesto mensual actual: %s", MoneyFormatter.format(budget))));
                 }
                 yield 0;
             }
             case "clear" -> {
                 // Se elimina el presupuesto guardado.
                 expenseService.clearMonthlyBudget();
-                System.out.println("Presupuesto mensual eliminado");
+                System.out.println(ConsoleText.ascii("Presupuesto mensual eliminado"));
                 yield 0;
             }
             // Si la subacción no existe, se explica el uso correcto.
@@ -216,7 +216,7 @@ public final class ExpenseTrackerApplication {
 
         // Se genera el CSV en el destino indicado.
         expenseService.exportToCsv(file, month, category);
-        System.out.printf("Gastos exportados correctamente a %s%n", file.toAbsolutePath());
+        System.out.printf("%s%n", ConsoleText.ascii(String.format("Gastos exportados correctamente a %s", file.toAbsolutePath())));
         return 0;
     }
 
@@ -228,16 +228,16 @@ public final class ExpenseTrackerApplication {
     // Imprime una tabla simple con los gastos obtenidos.
     private void printExpenses(List<Expense> expenses) {
         // Cabecera de la tabla.
-        System.out.printf("%-5s %-12s %-24s %-12s %-16s%n", "ID", "Fecha", "Descripción", "Importe", "Categoría");
+        System.out.printf("%-5s %-12s %-24s %-12s %-16s%n", "ID", "Fecha", "Descripcion", "Importe", "Categoria");
         // Cada gasto se imprime en una fila.
         for (Expense expense : expenses) {
             System.out.printf(
                     "%-5d %-12s %-24s %-12s %-16s%n",
                     expense.id(),
                     expense.date(),
-                    truncate(expense.description(), 23),
+                    truncate(ConsoleText.ascii(expense.description()), 23),
                     MoneyFormatter.format(expense.amount()),
-                    truncate(expense.categoryOrDefault(), 15)
+                    truncate(ConsoleText.ascii(expense.categoryOrDefault()), 15)
             );
         }
     }
@@ -249,7 +249,7 @@ public final class ExpenseTrackerApplication {
             return value;
         }
         // Si es más largo, se recorta y se añade un indicador visual.
-        return value.substring(0, Math.max(0, maxLength - 1)) + "…";
+        return value.substring(0, Math.max(0, maxLength - 3)) + "...";
     }
 
     // Muestra la ayuda general de comandos y notas de uso.

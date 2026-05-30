@@ -1,6 +1,7 @@
 package com.rastreador.gastos.service;
 
 import com.rastreador.gastos.MoneyFormatter;
+import com.rastreador.gastos.ConsoleText;
 import com.rastreador.gastos.model.Expense;
 import com.rastreador.gastos.model.ExpenseStore;
 import com.rastreador.gastos.persistence.ExpenseRepository;
@@ -107,7 +108,7 @@ public final class ExpenseService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         // Se devuelve el total y el nombre del mes si aplica.
-        return new Summary(total, month == null ? null : Month.of(month).getDisplayName(java.time.format.TextStyle.FULL, Locale.of("es", "ES")));
+        return new Summary(total, month == null ? null : ConsoleText.ascii(Month.of(month).getDisplayName(java.time.format.TextStyle.FULL, Locale.of("es", "ES"))));
     }
 
     // Asigna un presupuesto mensual nuevo.
